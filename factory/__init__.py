@@ -2,8 +2,9 @@ import os
 from flask import Flask
 
 def creat_app(spare_config = None):
-    # 自定义实例文件夹/app
-    app = Flask(__name__, instance_path = '/resource')
+    # 自定义实例文件夹/resource，此处为绝对路径，可以通过其他参数改为相对路径
+    # 和模板文件夹/template，此处为相对路径
+    app = Flask(__name__, instance_path = '/resource', template_folder = '../template')
 
     # 如果creat_app()没有接收到参数，使用默认的config文件
     if spare_config is None:
@@ -15,7 +16,9 @@ def creat_app(spare_config = None):
         app.config.from_pyfile(spare_config)
 
     # 引入蓝图
-    from resource import hello
+    from resource import hello, user, login_with_qq
     app.register_blueprint(hello.app)
+    app.register_blueprint(user.app)
+    app.register_blueprint(login_with_qq.app)
 
     return app
