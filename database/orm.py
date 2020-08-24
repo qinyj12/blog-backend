@@ -10,6 +10,7 @@ def initialize_orm():
         __tablename__ = 'user'
         id = Column(Integer, primary_key = True, nullable = False)
         name = Column(String(20), nullable = False)
+        email = Column(String(20), nullable = True)
         password = Column(String(20), nullable = False)
         signup_time = Column(String(20), nullable = False)
 
