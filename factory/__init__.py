@@ -16,9 +16,10 @@ def creat_app(spare_config = None):
         app.config.from_pyfile(spare_config)
 
     # 引入蓝图
-    from resource import hello, user, login_with_qq
+    from resource import hello, user
+    from resource.login import oauth
     app.register_blueprint(hello.app)
     app.register_blueprint(user.app)
-    app.register_blueprint(login_with_qq.app)
+    app.register_blueprint(oauth.app)
 
     return app

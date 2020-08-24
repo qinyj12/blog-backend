@@ -1,2 +1,5 @@
 #python cache
 __pycache__/
+
+# secret.py
+/factory/config/secret.py

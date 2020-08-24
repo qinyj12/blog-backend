@@ -1,4 +1,6 @@
-class Config(object):
+from factory.config import secret
+
+class Config(secret.Secret):
     # 开启debug模式
     DEBUG = True
     # 非ASCII编码不要转义
