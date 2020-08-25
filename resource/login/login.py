@@ -3,6 +3,7 @@ from flask import Blueprint, render_template, make_response
 from flask_restful import Api, Resource, reqparse
 from itsdangerous import TimedJSONWebSignatureSerializer as Serializer
 from functools import wraps
+from database import orm
 
 def create_token(parse):
     #第一个参数是内部的私钥，这里写在公用的配置信息里了，如果只是测试可以写死
@@ -28,6 +29,9 @@ def verify_token(token):
 app = Blueprint('login', __name__, url_prefix = '/login')
 api = Api(app)
 parser = reqparse.RequestParser()
+database_orm = orm.initialize_orm()
+database_session = database_orm['session']
+database_user = database_orm['user']
 
 # 定义一个判断是否登录的装饰器
 def ensure_token(func):
@@ -68,4 +72,32 @@ class User(Resource):
         username = verify_token(arg_token)
         return username
 
+class Signup_With_Email(Resource):
+    def post(self):
+        # 从'form'中拿到提交的数据
+        parser.add_argument('username', type = str, location = 'form')
+        parser.add_argument('password', type = str, location = 'form')
+        args = parser.parse_args()
+        arg_username = args['username']
+        arg_password = args['password']
+
+        # 存入数据库
+        new_user = database_user(
+            name = arg_username,
+            password = arg_password
+        )
+        database_session.add(new_user)
+        try:
+            database_session.commit()
+            database_session.close()
+            return '记录成功'
+        except Exception as e:
+            database_session.rollback()
+            database_session.close()
+            return str(e), 500
+
+    def get(self):
+        return make_response(render_template('signup.html'))
+
 api.add_resource(User, '/')
+api.add_resource(Signup_With_Email, '/signup')

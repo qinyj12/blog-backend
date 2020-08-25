@@ -3,15 +3,16 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>login</title>
+    <title>signup</title>
 </head>
 <body>
-    <h2>Login</h2>
+    <h2>Signup</h2>
     <form method="post" enctype="multipart/form-data">
         <input type="text" name="username">
         <input type="text" name="password">
-        <input type="submit" value="登录">
+        <input type="submit" value="注册">
     </form>
-    <p><button>跳转注册</button></p>
+    <!-- 这里是有问题的，访问不到这个文件 -->
+    <p><button><a href="/template/login.html">跳转登录</a></button></p>
 </body>
 </html>

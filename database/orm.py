@@ -1,6 +1,7 @@
-from sqlalchemy import Column, String, Integer, create_engine
+from sqlalchemy import Column, String, Integer, DateTime, create_engine
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.ext.declarative import declarative_base
+import datetime
 
 def initialize_orm():
     Base = declarative_base()
@@ -12,10 +13,8 @@ def initialize_orm():
         name = Column(String(20), nullable = False)
         email = Column(String(20), nullable = True)
         password = Column(String(20), nullable = False)
-        signup_time = Column(String(20), nullable = False)
+        signup_time = Column(DateTime, default = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S'), nullable = False)
 
-    # 这里要注意路径是datebase/database.db
-    # engine = create_engine('sqlite:///database/database.db', connect_args = {'check_same_thread': False})
     engine = create_engine(
         "mysql+pymysql://root:password@127.0.0.1:3306/main?charset=utf8",
         # max_overflow=0,   # 超过连接池大小外最多创建的连接
@@ -29,3 +28,5 @@ def initialize_orm():
 
     return {'session': session, 'user': User}
     # return Base.metadata.create_all(engine)
+
+# initialize_orm()
