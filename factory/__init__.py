@@ -1,11 +1,17 @@
 import os
-from flask import Flask
+from flask import Flask, url_for
 
 def creat_app(spare_config = None):
     # 自定义实例文件夹/resource，此处为绝对路径，可以通过其他参数改为相对路径
     # 和模板文件夹/template，此处为相对路径
     # ################################# static_folder，好像通过这个参数可以让外部访问这个文件夹
-    app = Flask(__name__, instance_path = '/resource', template_folder = '../template')
+    app = Flask(
+        __name__, 
+        instance_path = '/resource', 
+        template_folder = '../template', 
+        # static_folder = '../static', 
+        # static_url_path = '/static'
+    )
 
     # 如果creat_app()没有接收到参数，使用默认的config文件
     if spare_config is None:
