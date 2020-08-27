@@ -4,6 +4,7 @@ from flask_restful import Api, Resource, reqparse
 from itsdangerous import TimedJSONWebSignatureSerializer as Serializer
 from functools import wraps
 from database import orm
+import os
 
 def create_token(parse):
     #第一个参数是内部的私钥，这里写在公用的配置信息里了，如果只是测试可以写死
@@ -99,15 +100,5 @@ class Signup_With_Email(Resource):
     def get(self):
         return make_response(render_template('signup.html'))
 
-class Test(Resource):
-    def get(self):
-        return {
-            'static_url_path': current_app.static_url_path, 
-            'static_folder': current_app.static_folder,
-            'template_folder': current_app.template_folder
-        }
-        # return current_app.send_static_file('dog.jpg')
-
 api.add_resource(User, '/')
 api.add_resource(Signup_With_Email, '/signup')
-api.add_resource(Test, '/static')

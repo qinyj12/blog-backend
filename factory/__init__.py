@@ -1,5 +1,5 @@
 import os
-from flask import Flask, url_for
+from flask import Flask
 
 def creat_app(spare_config = None):
     # 自定义实例文件夹/resource，此处为绝对路径，可以通过其他参数改为相对路径
@@ -9,7 +9,8 @@ def creat_app(spare_config = None):
         __name__, 
         instance_path = '/resource', 
         template_folder = '../template', 
-        # static_folder = '../static', 
+        # 默认的static目录是'/factory/static'，这里改成'/static'
+        static_folder = os.path.join(os.getcwd(), 'static')
         # static_url_path = '/static'
     )
 
