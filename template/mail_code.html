@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <div class="father">
+        <div class="son">
+            <h3>你好！</h3>
+            <p>谢谢你痛踩我的博客！</p>
+            <p>请在博客上输入以下验证码完成注册：{{code}}</p>
+            <p>或者点击链接一键注册：</p>
+            <p style="text-align: right;">汪喵工坊</p>
+        </div>
+    </div>
+</body>
+<style>
+    div.father {
+        background: url(../static/mail_code_background.png) no-repeat;
+        background-size: cover;
+        width: calc(640px * 0.7);
+        height: calc(960px * 0.7);
+        padding: 25px;
+        box-sizing: border-box;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        border-radius: 10px;
+    }
+    div.son {
+        border-radius: 10px;
+        padding: 15px;
+        box-sizing: border-box;
+        width: 450px;
+        background-color: rgba(0, 0, 0, 0.2);
+        color: white;
+        font-weight: bold;
+    }
+</style>
+</html>

@@ -1,31 +1,12 @@
 #导入依赖包
-from flask import Blueprint, render_template, make_response, current_app, url_for
+from flask import Blueprint, render_template, make_response, redirect
+from flask.helpers import url_for
 from flask_restful import Api, Resource, reqparse
-from itsdangerous import TimedJSONWebSignatureSerializer as Serializer
-from functools import wraps
 from database import orm
-import os
-
-def create_token(parse):
-    #第一个参数是内部的私钥，这里写在公用的配置信息里了，如果只是测试可以写死
-    #第二个参数是有效期(秒)
-    s = Serializer('dev', expires_in = 60 * 60 * 24)
-    #接收用户id转换与编码
-    token = s.dumps({"id":parse}).decode("ascii")
-    return token
-
-def verify_token(token):
-    #参数为私有秘钥，跟上面方法的秘钥保持一致
-    s = Serializer('dev')
-    try:
-        #转换为字典
-        data = s.loads(token)
-        return data
-    except Exception as e:
-        return e
-    #拿到转换后的数据，根据模型类去数据库查询用户信息
-    # user = User.query.get(data["id"])
-    # return user
+from ..token import token_create
+from ..token import token_verify
+from ..token import token_ensure
+from ..mail import mail
 
 app = Blueprint('login', __name__, url_prefix = '/login')
 api = Api(app)
@@ -34,44 +15,37 @@ database_orm = orm.initialize_orm()
 database_session = database_orm['session']
 database_user = database_orm['user']
 
-# 定义一个判断是否登录的装饰器
-def ensure_token(func):
-    @wraps(func)
-    def inner(self):
-        # 判断cookie中有没有保存token
-        parser.add_argument('Token', type = str, location = 'cookies')
-        args = parser.parse_args()
-        # 如果保存了token
-        if args['Token']:
-            return func(self)
-        # 如果没有保存token，即尚未登录
-        else:
-            # 因为是通过flask_restful的api返回的，所以返回的是json字符串，要用make_response格式化一下
-            return make_response(render_template('login.html'))
-    return inner
-
-class User(Resource):
+class Login(Resource):
     def post(self):
         # 从'form'中拿到提交的数据
         parser.add_argument('username', type = str, location = 'form')
+        parser.add_argument('password', type = str, location = 'form')
         args = parser.parse_args()
         arg_username = args['username']
+        arg_password = args['password']
 
-        # 生成token
-        user_token = create_token(arg_username)
-        # 把token放在返回头里
-        return '已登录： %s' % arg_username, 200, {'Set-Cookie':'Token=' + user_token + ';Max-Age=' + str(10)}
-
-        ######## 需要先验证提交的数据，通过后作为token放在返回头里
+        # 去数据库判断用户名和密码是否一致，如果通过
+        if database_session.query(database_user).filter_by(name = arg_username, password = arg_password).scalar():
+            database_session.close()
+            # 生成token
+            user_token = token_create.create_token(arg_username)
+            # 因为要redirect的同时设置cookie，用make_response更轻松
+            resp = make_response(redirect(url_for('.login')))
+            resp.set_cookie('Token', user_token, 10)
+            return resp
+        # 如果用户名和密码不一致
+        else:
+            return '用户名和密码不一致', 401
 
     # 快使用装饰器，嚯嚯哈嘿
-    @ensure_token
+    @token_ensure.ensure_exist
+    # 如果cookie里没有保存Token
     def get(self):
         parser.add_argument('Token', type = str, location = 'cookies')
         args = parser.parse_args()
         arg_token = args['Token']
-        username = verify_token(arg_token)
-        return username
+        username = token_verify.verify_token(arg_token)
+        return make_response(render_template('user_info.html', username = username['username']))
 
 class Signup_With_Email(Resource):
     def post(self):
@@ -100,5 +74,21 @@ class Signup_With_Email(Resource):
     def get(self):
         return make_response(render_template('signup.html'))
 
-api.add_resource(User, '/')
+class Test_Mail(Resource):
+    def post(self):
+        parser.add_argument('user_mail_address', type = str)
+        args = parser.parse_args()
+        arg_user_mail_address = args['user_mail_address']
+        
+        mail.send_mail(arg_user_mail_address)
+    def get(self):
+        return make_response('\
+            <form method="post"enctype="multipart/form-data">\
+                <input type="text" name="user_mail_address">\
+                <input type="submit" value="发送邮件">\
+            </form>'
+        )
+
+api.add_resource(Login, '/')
 api.add_resource(Signup_With_Email, '/signup')
+api.add_resource(Test_Mail, '/mail')
