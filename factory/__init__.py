@@ -1,5 +1,6 @@
 import os
 from flask import Flask
+from flask_mail import Mail
 
 def creat_app(spare_config = None):
     # 自定义实例文件夹/resource，此处为绝对路径，可以通过其他参数改为相对路径
@@ -30,5 +31,8 @@ def creat_app(spare_config = None):
     app.register_blueprint(user.app)
     app.register_blueprint(oauth.app)
     app.register_blueprint(login.app)
+
+    # 创建一个flask-mail实例
+    app.mail_instance = Mail(app)
 
     return app

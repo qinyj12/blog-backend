@@ -1,6 +1,5 @@
 #导入依赖包
-from flask import Blueprint, render_template, make_response, redirect
-from flask.helpers import url_for
+from flask import Blueprint, render_template, make_response, redirect, g, url_for, current_app
 from flask_restful import Api, Resource, reqparse
 from database import orm
 from ..token import token_create
@@ -79,7 +78,6 @@ class Test_Mail(Resource):
         parser.add_argument('user_mail_address', type = str)
         args = parser.parse_args()
         arg_user_mail_address = args['user_mail_address']
-        
         mail.send_mail(arg_user_mail_address)
     def get(self):
         return make_response('\

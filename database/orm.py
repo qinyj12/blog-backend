@@ -15,6 +15,13 @@ def initialize_orm():
         password = Column(String(20), nullable = False)
         signup_time = Column(DateTime, default = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S'), nullable = False)
 
+    # 邮件验证码表
+    class Mail_Code(Base):
+        __tablename__ = 'mail_code'
+        id = Column(Integer, primary_key = True, nullable = False)
+        mail_code = Column(String(20), nullable = False)
+        time = Column(DateTime, default = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S'), nullable = False)
+
     engine = create_engine(
         "mysql+pymysql://root:password@127.0.0.1:3306/main?charset=utf8",
         # max_overflow=0,   # 超过连接池大小外最多创建的连接
@@ -26,7 +33,7 @@ def initialize_orm():
     DBSession = sessionmaker(engine)
     session = DBSession()
 
-    return {'session': session, 'user': User}
+    return {'session': session, 'user': User, 'mail_code': Mail_Code}
     # return Base.metadata.create_all(engine)
 
 # initialize_orm()
