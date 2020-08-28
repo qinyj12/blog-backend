@@ -1,11 +1,12 @@
 #导入依赖包
-from flask import Blueprint, render_template, make_response, redirect, g, url_for, current_app
+from flask import Blueprint, render_template, make_response, redirect, g, url_for, current_app, copy_current_request_context
 from flask_restful import Api, Resource, reqparse
 from database import orm
 from ..token import token_create
 from ..token import token_verify
 from ..token import token_ensure
 from ..mail import mail
+import threading
 
 app = Blueprint('login', __name__, url_prefix = '/login')
 api = Api(app)
@@ -13,6 +14,7 @@ parser = reqparse.RequestParser()
 database_orm = orm.initialize_orm()
 database_session = database_orm['session']
 database_user = database_orm['user']
+database_mail_code = database_orm['mail_code']
 
 class Login(Resource):
     def post(self):
@@ -78,7 +80,27 @@ class Test_Mail(Resource):
         parser.add_argument('user_mail_address', type = str)
         args = parser.parse_args()
         arg_user_mail_address = args['user_mail_address']
-        mail.send_mail(arg_user_mail_address)
+        
+        # 因为这里要用多线程，所以会脱离上下文，用copy_current_request_context装饰器来保留当前的上下文
+        @copy_current_request_context
+        def send_mail_and_record_random_num(target_mail_address):
+            # 发送邮件，并把结果（4位随机字符串）赋值给r
+            r = mail.send_mail(target_mail_address)
+            # 接口返回的是一个tuple，tuple不可改变，所以用作记录非常合适
+            if r:
+                new_code_in_database = database_mail_code(mail_code = r)
+                database_session.add(new_code_in_database)
+                database_session.commit()
+                database_session.close()
+            else:
+                database_session.rollback()
+                database_session.close()
+
+        # 使用多线程
+        threading.Thread(target = send_mail_and_record_random_num, args = (arg_user_mail_address,)).start()
+        # 多线程开始以后，就不必等待邮件发送完毕以后再返回结果了
+        return '发送成功'
+
     def get(self):
         return make_response('\
             <form method="post"enctype="multipart/form-data">\

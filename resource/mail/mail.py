@@ -1,11 +1,6 @@
 from flask_mail import Message
-from flask import current_app, render_template
+from flask import current_app, render_template, copy_current_request_context
 import random
-from database import orm
-
-database_orm = orm.initialize_orm()
-database_session = database_orm['session']
-database_mail_code = database_orm['mail_code']
 
 # 自定义一个随机整数类，接受一个参数
 class Random_Code():
@@ -36,11 +31,6 @@ def send_mail(target_mail_address):
     # 先尝试发送邮件，如果成功，再把这个随机字符串保存到数据库
     try:
         mail.send(msg)
-        new_code_in_database = database_mail_code(mail_code = new_code)
-        database_session.add(new_code_in_database)
-        database_session.commit()
-        database_session.close()
-    # 如果邮件发送失败，或者没有成功保存到数据库，那就要rollback
+        return (new_code)
     except:
-        database_session.rollback()
-        database_session.close()
+        return False
