@@ -23,7 +23,7 @@ def initialize_orm():
         time = Column(DateTime, default = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S'), nullable = False)
 
     engine = create_engine(
-        "mysql+pymysql://root:password@127.0.0.1:3306/main?charset=utf8",
+        "mysql+pymysql://qinyj12:123456@127.0.0.1:3306/main?charset=utf8",
         # max_overflow=0,   # 超过连接池大小外最多创建的连接
         # pool_size=5,      # 连接池大小
         # pool_timeout=30,  # 池中没有线程最多等待的时间，否则报错
@@ -34,6 +34,8 @@ def initialize_orm():
     session = DBSession()
 
     return {'session': session, 'user': User, 'mail_code': Mail_Code}
+    # 这是用来初始化数据库用的，给数据库main添加class定义的表
     # return Base.metadata.create_all(engine)
 
+# 这是用来初始化数据库用的
 # initialize_orm()
