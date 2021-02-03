@@ -33,6 +33,7 @@ def initialize_orm():
     DBSession = sessionmaker(engine)
     session = DBSession()
 
+    # user表，mail_code表，session是用来执行查询、插入等操作的
     return {'session': session, 'user': User, 'mail_code': Mail_Code}
     # 这是用来初始化数据库用的，给数据库main添加class定义的表
     # return Base.metadata.create_all(engine)

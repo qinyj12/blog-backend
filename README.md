@@ -1,5 +1,6 @@
 # 开荒一个flask写的博客后端
-- [ ] 2021.1.26重新开始熟悉python和flask（orm、mysql）
+- [x] 2021.1.26重新开始熟悉python和flask
+- [ ] 2021.2.3复习了flask和flask_restful，还需要复习这个demo
 - [ ] 登录组件
 - [ ] orm和数据库
 - [ ] 邮箱验证码注册。目前还要给验证码设置有效期。验证码用协程
