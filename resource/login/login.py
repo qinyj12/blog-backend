@@ -1,7 +1,7 @@
 #导入依赖包
 from flask import Blueprint, render_template, make_response, redirect, g, url_for, current_app, copy_current_request_context
 from flask_restful import Api, Resource, reqparse
-from database import orm
+from database import database_session, database_tables
 from ..token import token_create
 from ..token import token_verify
 from ..token import token_ensure
@@ -11,10 +11,11 @@ import threading
 app = Blueprint('login', __name__, url_prefix = '/login')
 api = Api(app)
 parser = reqparse.RequestParser()
-database_orm = orm.initialize_orm()
-database_session = database_orm['session']
-database_user = database_orm['user']
-database_mail_code = database_orm['mail_code']
+
+database_session = database_session.session
+
+database_user = database_tables.User
+database_mail_code = database_tables.Mail_Code
 
 class Login(Resource):
     def post(self):

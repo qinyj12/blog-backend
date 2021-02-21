@@ -7,5 +7,6 @@
        "**/.gitignore": true,
        "**/__pycache__/": true
 },
-"git.ignoreLimitWarning": true
+"git.ignoreLimitWarning": true,
+"python.linting.enabled": false
 }
