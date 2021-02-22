@@ -7,13 +7,14 @@ from ..token import token_verify
 from ..token import token_ensure
 from ..mail import mail
 import threading
+from database import ensure_database_integrity
 
 app = Blueprint('login', __name__, url_prefix = '/login')
 api = Api(app)
 parser = reqparse.RequestParser()
-
+# 拿到session
 database_session = database_session.session
-
+# 拿到表类
 database_user = database_tables.User
 database_mail_code = database_tables.Mail_Code
 

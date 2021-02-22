@@ -7,20 +7,23 @@ Base = declarative_base()
 
 # User表
 class User(Base):
-    __tablename__ = 'user'
+    __tablename__ = 'User'
     id = Column(Integer, primary_key = True, nullable = False)
     name = Column(String(20), nullable = False)
     email = Column(String(20), nullable = True)
     password = Column(String(20), nullable = False)
-    signup_time = Column(
-        DateTime, 
-        default = func.now(), 
-        nullable = False
-    )
+    signup_time = Column(DateTime, default = func.now(), nullable = False)
 
 # 邮件验证码表
 class Mail_Code(Base):
-    __tablename__ = 'mail_code'
+    __tablename__ = 'Mail_Code'
     id = Column(Integer, primary_key = True, nullable = False)
     mail_code = Column(String(20), nullable = False)
-    time = Column(DateTime, default = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S'), nullable = False)
+    time = Column(DateTime, default = func.now(), nullable = False)
+
+# 测试表
+class Test(Base):
+    __tablename__ = 'Test'
+    id = Column(Integer, primary_key = True, nullable = False)
+    content = Column(String(20), nullable = False)
+    time = Column(DateTime, default = func.now(), nullable = False)
