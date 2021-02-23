@@ -1,9 +1,7 @@
-from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy import Column, String, Integer, DateTime
 from sqlalchemy.sql import func
-
-# 创建一个基类，所有映射数据表的类都继承自该基类
-Base = declarative_base()
+# 引入Base基类
+from .database_factory import Base
 
 # User表
 class User(Base):

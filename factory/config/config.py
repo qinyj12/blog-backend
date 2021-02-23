@@ -5,3 +5,5 @@ class Config(secret.Secret):
     DEBUG = True
     # 非ASCII编码不要转义
     RESTFUL_JSON = {'ensure_ascii': False}
+    # 数据库链接
+    DATABASE_URL = 'mysql+pymysql://qinyj12:123456@127.0.0.1:3306/main?charset=utf8'

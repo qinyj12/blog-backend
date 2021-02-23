@@ -1,7 +1,7 @@
 from flask import Blueprint
 from flask_restful import Api, Resource, reqparse
-from database import database_session, database_tables
-from database.ensure_database_integrity import ensure_database_integrity
+from database import database_factory, database_tables
+from database.ensure_database_integrity import ensure_database_tables
 
 app = Blueprint('hello', __name__, url_prefix = '/hello')
 
@@ -9,7 +9,7 @@ api = Api(app)
 parser = reqparse.RequestParser()
 
 # 拿到session
-database_session = database_session.session
+database_session = database_factory.session
 # 拿到表类
 database_test = database_tables.Test
 
@@ -18,7 +18,8 @@ class Hello(Resource):
         return {'result': 'hello world'}
 
 class Test(Resource):
-    @ensure_database_integrity('Test')
+    # 引入装饰器，确保存在Test表
+    @ensure_database_tables('Test')
     def get(self):
         parser.add_argument('content', type = str, location = 'args')
         args = parser.parse_args()

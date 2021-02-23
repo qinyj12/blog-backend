@@ -1,19 +1,19 @@
 #导入依赖包
 from flask import Blueprint, render_template, make_response, redirect, g, url_for, current_app, copy_current_request_context
 from flask_restful import Api, Resource, reqparse
-from database import database_session, database_tables
+from database import database_factory, database_tables
 from ..token import token_create
 from ..token import token_verify
 from ..token import token_ensure
 from ..mail import mail
 import threading
-from database import ensure_database_integrity
+from database.ensure_database_integrity import ensure_database_tables
 
 app = Blueprint('login', __name__, url_prefix = '/login')
 api = Api(app)
 parser = reqparse.RequestParser()
 # 拿到session
-database_session = database_session.session
+database_session = database_factory.session
 # 拿到表类
 database_user = database_tables.User
 database_mail_code = database_tables.Mail_Code
@@ -51,6 +51,8 @@ class Login(Resource):
         return make_response(render_template('user_info.html', username = username['username']))
 
 class Signup_With_Email(Resource):
+    # 引入装饰器，确保存在User表
+    @ensure_database_tables('User')
     def post(self):
         # 从'form'中拿到提交的数据
         parser.add_argument('username', type = str, location = 'form')

@@ -1,15 +1,15 @@
 # 做一个装饰器，保证database的表存在
 from sqlalchemy_utils import database_exists, create_database
-from .database_session import engine
+from .database_factory import engine
 from .database_tables import Base
 from . import database_tables
 
 # 因为这个装饰器要传参，所以要再做一层。
-def ensure_database_integrity(*target_tables):
+def ensure_database_tables(*target_tables):
     def wrapper_fir(func):
         def wrapper_sec(*args, **kw):
             # 如果这个数据库存在，那什么也不用做
-            if database_exists("mysql+pymysql://qinyj12:123456@127.0.0.1:3306/main?charset=utf8"):
+            if database_exists(engine.url):
                 pass
             
             # 如果这个数据库不存在，则创建这个数据库
