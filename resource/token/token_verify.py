@@ -1,5 +1,6 @@
 from itsdangerous import TimedJSONWebSignatureSerializer as Serializer
 
+# 这是一个接收token，然后解密的函数
 def verify_token(token):
     #参数为私有秘钥，跟上面方法的秘钥保持一致
     s = Serializer('dev')

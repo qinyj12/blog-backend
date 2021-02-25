@@ -1,7 +1,8 @@
 #导入依赖包
 from flask import Blueprint, render_template, make_response, redirect, g, url_for, current_app, copy_current_request_context
 from flask_restful import Api, Resource, reqparse
-from database import database_factory, database_tables
+from database import  database_tables, database_factory
+# 不知道为什么，这里直接from token绝对导入就是不行，要相对导入才可以
 from ..token import token_create
 from ..token import token_verify
 from ..token import token_ensure
@@ -20,35 +21,44 @@ database_mail_code = database_tables.Mail_Code
 
 class Login(Resource):
     def post(self):
-        # 从'form'中拿到提交的数据
-        parser.add_argument('username', type = str, location = 'form')
-        parser.add_argument('password', type = str, location = 'form')
+        # 先后从'json'和'args'中拿到提交的数据，分别对应的是post和get方法
+        parser.add_argument('username', type = str, location = ['json', 'args'])
+        parser.add_argument('password', type = str, location = ['json', 'args'])
         args = parser.parse_args()
         arg_username = args['username']
         arg_password = args['password']
 
-        # 去数据库判断用户名和密码是否一致，如果通过
-        if database_session.query(database_user).filter_by(name = arg_username, password = arg_password).scalar():
+        # 去数据库判断用户名和密码是否一致，返回的是database对象，直接target_user.id就能拿到数据
+        target_user = database_session.query(database_user).filter_by(name = arg_username, password = arg_password).scalar()
+        # 如果通过
+        if target_user:
             database_session.close()
-            # 生成token
-            user_token = token_create.create_token(arg_username)
+            # 从数据库拿到数据，加密成token，形式为{'name':xxx, 'avatar':xxx}
+            user_token = token_create.create_token({'name': target_user.name, 'avatar':target_user.avatar})
             # 因为要redirect的同时设置cookie，用make_response更轻松
-            resp = make_response(redirect(url_for('.login')))
-            resp.set_cookie('Token', user_token, 10)
-            return resp
+            # resp = make_response(redirect(url_for('.login')))
+            # resp.set_cookie('Token', user_token, 100)
+            resp = {
+                'code': 20000, 
+                'data': {'token': user_token}
+            }
+            return resp, 200
         # 如果用户名和密码不一致
         else:
             return '用户名和密码不一致', 401
 
-    # 快使用装饰器，嚯嚯哈嘿
-    @token_ensure.ensure_exist
-    # 如果cookie里没有保存Token
+    # 使用装饰器，确保前端cookie中存在名为blog_backend_token的token
+    @token_ensure.ensure_exist_target_token('blog_backend_token')
     def get(self):
-        parser.add_argument('Token', type = str, location = 'cookies')
+        print('通过装饰器判断，开始解析token')
+        # 从前端拿到token后
+        parser.add_argument('blog_backend_token', type = str, location = ['json', 'cookies', 'args'])
         args = parser.parse_args()
-        arg_token = args['Token']
-        username = token_verify.verify_token(arg_token)
-        return make_response(render_template('user_info.html', username = username['username']))
+        arg_token = args['blog_backend_token']
+        # 拿到token后，解密
+        token_decrypt = token_verify.verify_token(arg_token)
+        return token_decrypt, 200
+        # return make_response(render_template('user_info.html', username = username['username']))
 
 class Signup_With_Email(Resource):
     # 引入装饰器，确保存在User表

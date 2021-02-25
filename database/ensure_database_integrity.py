@@ -1,8 +1,8 @@
 # 做一个装饰器，保证database的表存在
 from sqlalchemy_utils import database_exists, create_database
-from .database_factory import engine
-from .database_tables import Base
-from . import database_tables
+from database.database_factory import engine
+from database.database_tables import Base
+from database import database_tables
 
 # 因为这个装饰器要传参，所以要再做一层。
 def ensure_database_tables(*target_tables):

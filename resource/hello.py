@@ -1,6 +1,6 @@
 from flask import Blueprint
 from flask_restful import Api, Resource, reqparse
-from database import database_factory, database_tables
+from database import database_tables, database_factory
 from database.ensure_database_integrity import ensure_database_tables
 
 app = Blueprint('hello', __name__, url_prefix = '/hello')
