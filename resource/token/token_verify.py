@@ -7,6 +7,7 @@ def verify_token(token):
     try:
         #转换为字典
         data = s.loads(token)
+        print('token解析完成，内容是', data)
         return data
     except Exception as e:
         return e

@@ -34,7 +34,12 @@ class Login(Resource):
         if target_user:
             database_session.close()
             # 从数据库拿到数据，加密成token，形式为{'name':xxx, 'avatar':xxx}
-            user_token = token_create.create_token({'name': target_user.name, 'avatar':target_user.avatar})
+            user_token = token_create.create_token({
+                'name': target_user.name, 
+                'avatar': target_user.avatar, 
+                'introduction': target_user.introduction,
+                'roles': target_user.roles
+            })
             # 因为要redirect的同时设置cookie，用make_response更轻松
             # resp = make_response(redirect(url_for('.login')))
             # resp.set_cookie('Token', user_token, 100)
@@ -48,13 +53,14 @@ class Login(Resource):
             return '用户名和密码不一致', 401
 
     # 使用装饰器，确保前端cookie中存在名为blog_backend_token的token
-    @token_ensure.ensure_exist_target_token('blog_backend_token')
+    # 前端定义的就是通过get方法把token传参过来。
+    @token_ensure.ensure_exist_target_token('token', ['json', 'cookies', 'args'])
     def get(self):
         print('通过装饰器判断，开始解析token')
         # 从前端拿到token后
-        parser.add_argument('blog_backend_token', type = str, location = ['json', 'cookies', 'args'])
+        parser.add_argument('token', type = str, location = ['json', 'cookies', 'args'])
         args = parser.parse_args()
-        arg_token = args['blog_backend_token']
+        arg_token = args['token']
         # 拿到token后，解密
         token_decrypt = token_verify.verify_token(arg_token)
         return token_decrypt, 200

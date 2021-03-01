@@ -3,13 +3,13 @@ from flask import make_response, render_template
 
 parser = reqparse.RequestParser()
 
-# 定义一个判断是否登录的装饰器
-def ensure_exist_target_token(target_token):
+# 定义一个判断前端是否存在指定token的装饰器
+def ensure_exist_target_token(target_token, target_location):
     def wrapper_fir(func):
         def wrapper_sec(*args, **kw):
-            print('使用装饰器，判断前端是否存在cookies')
+            print('使用装饰器，判断前端是否存在token')
             # 判断cookie中有没有保存名为target_token的token
-            parser.add_argument(target_token, type = str, location = 'cookies')
+            parser.add_argument(target_token, type = str, location = target_location)
             args = parser.parse_args()
             print(args)
             # 如果保存了token
