@@ -25,12 +25,13 @@ def creat_app(spare_config = None):
         app.config.from_pyfile(spare_config)
 
     # 引入蓝图
-    from resource import hello, user
-    from resource.login import oauth, login
-    app.register_blueprint(hello.app)
-    app.register_blueprint(user.app)
+    from resource import test_hello, test_user
+    from resource.user import oauth, login, name
+    app.register_blueprint(test_hello.app)
+    app.register_blueprint(test_user.app)
     app.register_blueprint(oauth.app)
     app.register_blueprint(login.app)
+    app.register_blueprint(name.app)
 
     # 创建一个flask-mail实例
     app.mail_instance = Mail(app)

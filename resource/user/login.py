@@ -19,6 +19,7 @@ database_session = database_factory.session
 database_user = database_tables.User
 database_mail_code = database_tables.Mail_Code
 
+# 涉及到登录的函数，post用于验证用户名密码，get用于解析token
 class Login(Resource):
     def post(self):
         # 先后从'json'和'args'中拿到提交的数据，分别对应的是post和get方法
@@ -50,7 +51,7 @@ class Login(Resource):
             return resp, 200
         # 如果用户名和密码不一致
         else:
-            return '用户名和密码不一致', 401
+            return {'code': 50008, 'message': '用户名和密码不一致'}, 200
 
     # 使用装饰器，确保前端cookie中存在名为blog_backend_token的token
     # 前端定义的就是通过get方法把token传参过来。
@@ -63,7 +64,12 @@ class Login(Resource):
         arg_token = args['token']
         # 拿到token后，解密
         token_decrypt = token_verify.verify_token(arg_token)
-        return token_decrypt, 200
+        print('拿到解密后的token ', token_decrypt)
+        resp = {
+            'code': 20000,
+            'data': token_decrypt
+        }
+        return resp, 200
         # return make_response(render_template('user_info.html', username = username['username']))
 
 class Signup_With_Email(Resource):
