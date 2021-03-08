@@ -7,18 +7,18 @@ parser = reqparse.RequestParser()
 def ensure_exist_target_token(target_token, target_location):
     def wrapper_fir(func):
         def wrapper_sec(*args, **kw):
-            print('使用装饰器，判断前端是否存在token')
+            # print('使用装饰器，判断前端是否存在token')
             # 判断cookie中有没有保存名为target_token的token
             parser.add_argument(target_token, type = str, location = target_location)
             args = parser.parse_args()
-            print(args)
+            # print(args)
             # 如果保存了token
             if args[target_token]:
-                print('存在cookies')
+                # print('存在cookies')
                 return func(*args, **kw)
             # 如果没有保存token
             else:
-                print('no cookie')
+                # print('no cookie')
                 return '没有发现token', 400
                 # 因为是通过flask_restful的api返回的，所以返回的是json字符串，要用make_response格式化一下
                 # return make_response(render_template('login.html'))

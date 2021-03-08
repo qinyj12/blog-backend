@@ -57,14 +57,14 @@ class Login(Resource):
     # 前端定义的就是通过get方法把token传参过来。
     @token_ensure.ensure_exist_target_token('token', ['json', 'cookies', 'args'])
     def get(self):
-        print('通过装饰器判断，开始解析token')
+        # print('通过装饰器判断，开始解析token')
         # 从前端拿到token后
         parser.add_argument('token', type = str, location = ['json', 'cookies', 'args'])
         args = parser.parse_args()
         arg_token = args['token']
         # 拿到token后，解密
         token_decrypt = token_verify.verify_token(arg_token)
-        print('拿到解密后的token ', token_decrypt)
+        # print('拿到解密后的token ', token_decrypt)
         resp = {
             'code': 20000,
             'data': token_decrypt

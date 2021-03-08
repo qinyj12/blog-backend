@@ -12,18 +12,37 @@ database_session = database_factory.session
 database_user = database_tables.User
 
 # 用于用户名的函数，get用于验证用户名是否重复
-class Name(Resource):
+class Name_Availability(Resource):
     def get(self):
         # 先从url中拿到目标用户名
         parser.add_argument('name', type = str, location = ['args'])
         args = parser.parse_args()
         arg_name = args['name']
 
-        # 判断目标用户名是否已在数据出现，如果已经出现
-        if database_session.query(database_user).filter_by(name = arg_name).scalar():
-            # 还需要和前端匹配接口格式
-            return '重复'
+        # 调用函数，判断用户名是否已在数据库出现。如果已出现
+        if if_name_not_repeated(arg_name) and if_name_legal(arg_name):
+            return {
+                'code': 20000,
+                'data': '可用'
+            }
         else:
-            return '单一'
+            return {
+                'code': 20000,
+                'data': '不可用，用户名重复或者包含空格'
+            }
 
-api.add_resource(Name, '/')
+# 判断用户名是否重复
+def if_name_not_repeated(name_input):
+    if database_session.query(database_user).filter_by(name = name_input).scalar():
+        return False
+    else:
+        return True
+
+# 判断用户名是否标准（不含空格）
+def if_name_legal(name_input):
+    if ' ' in name_input:
+        return False
+    else:
+        return True
+
+api.add_resource(Name_Availability, '/availability')
