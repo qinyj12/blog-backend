@@ -1,7 +1,8 @@
 from flask import app, Blueprint
 from flask_restful import Api, Resource, reqparse, request
 from database import  database_tables, database_factory
-import base64
+from werkzeug.datastructures import FileStorage
+import time
 
 app = Blueprint('avatar', __name__, url_prefix = '/avatar')
 api = Api(app)
@@ -15,15 +16,15 @@ database_user = database_tables.User
 class Avatar(Resource):
     # 修改用户头像
     def post(self):
-        # 因为是post方法，要从form中拿到前端上传的avatar
-        # parser.add_argument('avatar', location = ['form'])
-        # args = parser.parse_args()
-        # arg_avatar = args['avatar']
+        # 从files中拿到前端上传的avatar
+        parser.add_argument('avatar', type = FileStorage, location = ['files'])
+        args = parser.parse_args()
+        arg_avatar = args['avatar']
 
-        print(dict(request.form))
+        # 此处要指定保存的位置和文件名
+        arg_avatar.save('demo.png')
+        print(arg_avatar.read())
 
-        # with open('demo.png', 'wb') as _:
-        #     _.write(base64.b64encode(arg_avatar))
         return {
             'code': 20000,
             'data': 'avatar'
