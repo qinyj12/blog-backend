@@ -36,6 +36,7 @@ class Login(Resource):
             database_session.close()
             # 从数据库拿到数据，加密成token，形式为{'name':xxx, 'avatar':xxx}
             user_token = token_create.create_token({
+                'id': target_user.id,
                 'name': target_user.name, 
                 'avatar': target_user.avatar, 
                 'introduction': target_user.introduction,

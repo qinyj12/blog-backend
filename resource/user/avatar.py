@@ -1,8 +1,8 @@
 from flask import app, Blueprint
 from flask_restful import Api, Resource, reqparse, request
-from database import  database_tables, database_factory
+from database import database_tables, database_factory
+from ..token import token_verify
 from werkzeug.datastructures import FileStorage
-import time
 
 app = Blueprint('avatar', __name__, url_prefix = '/avatar')
 api = Api(app)
@@ -18,8 +18,15 @@ class Avatar(Resource):
     def post(self):
         # 从files中拿到前端上传的avatar
         parser.add_argument('avatar', type = FileStorage, location = ['files'])
+        # 拿到前端传来的token
+        parser.add_argument('X-Token', location = ['headers'])
         args = parser.parse_args()
         arg_avatar = args['avatar']
+        arg_token = args['X-Token']
+        # 解析token中的信息
+        token_verified = token_verify.verify_token(arg_token)
+        user_id = token_verified['id']
+        
 
         # 此处要指定保存的位置和文件名
         arg_avatar.save('demo.png')
