@@ -21,6 +21,7 @@ database_mail_code = database_tables.Mail_Code
 
 # 涉及到登录的函数，post用于验证用户名密码，get用于解析token
 class Login(Resource):
+    # post用于验证用户名密码，验证通过后加密返回
     def post(self):
         # 先后从'json'和'args'中拿到提交的数据，分别对应的是post和get方法
         parser.add_argument('username', type = str, location = ['json', 'args'])
@@ -29,7 +30,7 @@ class Login(Resource):
         arg_username = args['username']
         arg_password = args['password']
 
-        # 去数据库判断用户名和密码是否一致，返回的是database对象，直接target_user.id就能拿到数据
+        # 去数据库判断用户名和密码是否一致，返回的是database对象，直接target_user.id/name/avatar就能拿到数据
         target_user = database_session.query(database_user).filter_by(name = arg_username, password = arg_password).scalar()
         # 如果通过
         if target_user:
@@ -57,6 +58,7 @@ class Login(Resource):
     # 使用装饰器，确保前端cookie中存在名为blog_backend_token的token
     # 前端定义的就是通过get方法把token传参过来。
     @token_ensure.ensure_exist_target_token('token', ['json', 'cookies', 'args'])
+    # get用于解析token
     def get(self):
         # print('通过装饰器判断，开始解析token')
         # 从前端拿到token后
@@ -65,11 +67,12 @@ class Login(Resource):
         arg_token = args['token']
         # 拿到token后，解密
         token_decrypt = token_verify.verify_token(arg_token)
-        # print('拿到解密后的token ', token_decrypt)
+        print('拿到解密后的token ', token_decrypt)
         resp = {
             'code': 20000,
             'data': token_decrypt
         }
+        # print('getInfo')
         return resp, 200
         # return make_response(render_template('user_info.html', username = username['username']))
 
