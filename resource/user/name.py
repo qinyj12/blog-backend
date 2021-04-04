@@ -24,7 +24,7 @@ class Name_Availability(Resource):
             return {
                 'code': 20000,
                 'data': '可用'
-            }
+            }                                                                                                                                          
         else:
             return {
                 'code': 20000,

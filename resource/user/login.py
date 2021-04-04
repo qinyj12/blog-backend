@@ -21,6 +21,14 @@ database_mail_code = database_tables.Mail_Code
 
 # 涉及到登录的函数，post用于验证用户名密码，get用于解析token
 class Login(Resource):
+    def __init__(self):
+        self.user_info = {
+            'id': 0,
+            'name': 'unnamed', 
+            'avatar': '', 
+            'introduction': '',
+            'roles': ''
+        }
     # post用于验证用户名密码，验证通过后加密返回
     def post(self):
         # 先后从'json'和'args'中拿到提交的数据，分别对应的是post和get方法
@@ -35,14 +43,14 @@ class Login(Resource):
         # 如果通过
         if target_user:
             database_session.close()
-            # 从数据库拿到数据，加密成token，形式为{'name':xxx, 'avatar':xxx}
-            user_token = token_create.create_token({
-                'id': target_user.id,
-                'name': target_user.name, 
-                'avatar': target_user.avatar, 
-                'introduction': target_user.introduction,
-                'roles': target_user.roles
-            })
+            # 从数据库拿到数据，然后赋值给已定义好的user_info模板
+            self.user_info['id'] = target_user.id
+            self.user_info['name'] = target_user.name
+            self.user_info['avatar'] = target_user.avatar
+            self.user_info['introduction'] = target_user.introduction
+            self.user_info['roles'] = target_user.roles
+            # 加密user_info为token
+            user_token = token_create.create_token(self.user_info)
             # 因为要redirect的同时设置cookie，用make_response更轻松
             # resp = make_response(redirect(url_for('.login')))
             # resp.set_cookie('Token', user_token, 100)
