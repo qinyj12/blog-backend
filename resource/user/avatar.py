@@ -1,10 +1,12 @@
 from flask import app, Blueprint
 from flask_restful import Api, Resource, reqparse, request
+from sqlalchemy.sql import func
 from database import database_tables, database_factory
 from ..token import token_verify
 from werkzeug.datastructures import FileStorage
 import pathlib
 import time
+import os
 
 app = Blueprint('avatar', __name__, url_prefix = '/avatar')
 api = Api(app)
@@ -31,9 +33,12 @@ class Avatar(Resource):
         # 先找到对应的用户
         target_user = database_session.query(database_user).filter_by(id = user_id).scalar()
         if target_user:
-            # 先拿到老的avatar名字，"http://127.xxx/./static/user/1/avatar/xx.png"=>"./static/user/1/avatar/xx.png"
-            old_avatar = target_user.avatar.strip('http://127.0.0.1:5000/')
-
+            try:
+                # 先尝试拿到老的avatar名字，"http://127.xxx/./static/user/1/avatar/xx.png"=>"./static/user/1/avatar/xx.png"
+                # 如果当前用户没有设置头像，那自然拿不到
+                old_avatar = target_user.avatar.strip('http://127.0.0.1:5000/')
+            except:
+                pass
             # 找到/static/user/1/avatar/目录
             save_dir = './static/user/' + str(user_id) + '/avatar/' 
             # 创建名为user_id的目录，用来保存头像。如果目录已存在的话，就不用创建了
@@ -46,12 +51,18 @@ class Avatar(Resource):
 
             # 再修改数据库
             target_user.avatar = 'http://127.0.0.1:5000/' + avatar_fullpath
+            # 更新用户的最近活动时间
+            target_user.recently_time = func.now()
+            print(target_user.recently_time)
             database_session.commit()
             database_session.close()
 
-            # 最后删除老的avatar
-            import os
-            os.remove(old_avatar)
+            # 最后尝试删除老的avatar，如果之前不存在old avatar，那自然删不掉
+            try:
+                os.remove(old_avatar)
+            except:
+                print('未删除old avatar')
+
         else:
             return {'code': 50008, 'message': '用户不存在'}, 200
 

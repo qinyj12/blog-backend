@@ -1,6 +1,7 @@
 #导入依赖包
 from flask import Blueprint, render_template, make_response, redirect, g, url_for, current_app, copy_current_request_context
 from flask_restful import Api, Resource, reqparse
+from sqlalchemy.sql import func
 from database import  database_tables, database_factory
 # 不知道为什么，这里直接from token绝对导入就是不行，要相对导入才可以
 from ..token import token_create
@@ -23,13 +24,17 @@ database_mail_code = database_tables.Mail_Code
 class Login(Resource):
     def __init__(self):
         self.user_info = {
-            'id': 0,
+            'id': None,
             'name': 'unnamed', 
-            'avatar': '', 
-            'introduction': '',
-            'roles': ''
+            'email': '',
+            'phone': '',
+            'avatar': '',
+            'roles': '',
+            'introduction': ''
         }
-    # post用于验证用户名密码，验证通过后加密返回
+    # post用于验证用户名密码，验证通过后加密返回token
+    # 引入装饰器，确保存在User表
+    @ensure_database_tables('User')
     def post(self):
         # 先后从'json'和'args'中拿到提交的数据，分别对应的是post和get方法
         parser.add_argument('username', type = str, location = ['json', 'args'])
@@ -42,7 +47,9 @@ class Login(Resource):
         target_user = database_session.query(database_user).filter_by(name = arg_username, password = arg_password).scalar()
         # 如果通过
         if target_user:
-            database_session.close()
+            # 先更新用户的最近活动时间
+            target_user.recently_time = func.now()
+            database_session.commit()
             # 从数据库拿到数据，然后赋值给已定义好的user_info模板
             self.user_info['id'] = target_user.id
             self.user_info['name'] = target_user.name
@@ -51,18 +58,18 @@ class Login(Resource):
             self.user_info['roles'] = target_user.roles
             # 加密user_info为token
             user_token = token_create.create_token(self.user_info)
-            # 因为要redirect的同时设置cookie，用make_response更轻松
-            # resp = make_response(redirect(url_for('.login')))
-            # resp.set_cookie('Token', user_token, 100)
             resp = {
                 'code': 20000, 
                 'data': {'token': user_token}
             }
+            database_session.close()
             return resp, 200
         # 如果用户名和密码不一致
         else:
             return {'code': 50008, 'message': '用户名和密码不一致'}, 200
 
+    # 引入装饰器，确保存在User表
+    @ensure_database_tables('User')
     # 使用装饰器，确保前端cookie中存在名为blog_backend_token的token
     # 前端定义的就是通过get方法把token传参过来。
     @token_ensure.ensure_exist_target_token('token', ['json', 'cookies', 'args'])

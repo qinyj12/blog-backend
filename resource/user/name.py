@@ -1,6 +1,7 @@
 from flask import app, Blueprint
 from flask_restful import Api, Resource, reqparse
 from database import  database_tables, database_factory
+from ..token import token_verify
 
 app = Blueprint('name', __name__, url_prefix = '/name')
 api = Api(app)
@@ -11,24 +12,37 @@ database_session = database_factory.session
 # 拿到表类
 database_user = database_tables.User
 
-# 用于用户名的函数，get用于验证用户名是否重复
-class Name_Availability(Resource):
-    def get(self):
+# 用于用户名的函数，修改用户名
+class Name(Resource):
+    def post(self):
         # 先从url中拿到目标用户名
         parser.add_argument('name', type = str, location = ['args'])
         args = parser.parse_args()
         arg_name = args['name']
 
-        # 调用函数，判断用户名是否已在数据库出现。如果已出现
+        # 调用函数，判断用户名是否符合标准，并且是否未在数据库出现。如果符合条件
         if if_name_not_repeated(arg_name) and if_name_legal(arg_name):
+            # 拿到前端传来的token
+            parser.add_argument('X-Token', location = ['headers'])
+            args = parser.parse_args()
+            arg_token = args['X-Token']
+            # 解析token中的信息
+            token_verified = token_verify.verify_token(arg_token)
+            user_id = token_verified['id']
+            # 找到对应的用户
+            target_user = database_session.query(database_user).filter_by(id = user_id).scalar()
+            # 修改数据库中的name字段
+            target_user.name = arg_name
+            database_session.commit()
+            database_session.close()
             return {
                 'code': 20000,
-                'data': '可用'
+                'data': {'if_available': True, 'result': '修改成功'}
             }                                                                                                                                          
         else:
             return {
                 'code': 20000,
-                'data': '不可用，用户名重复或者包含空格'
+                'data': {'if_available': False, 'result': '用户名重复或者包含空格'}
             }
 
 # 判断用户名是否重复
@@ -45,4 +59,4 @@ def if_name_legal(name_input):
     else:
         return True
 
-api.add_resource(Name_Availability, '/availability')
+api.add_resource(Name, '/')

@@ -6,14 +6,16 @@ from database.database_factory import Base
 # User表
 class User(Base):
     __tablename__ = 'User'
-    id = Column(Integer, primary_key = True, nullable = False)
+    id = Column(Integer, primary_key = True, nullable = True)
     name = Column(String(20), nullable = False)
     email = Column(String(20), nullable = True)
+    phone = Column(String(20), nullable = True)
     password = Column(String(20), nullable = False)
+    avatar = Column(String(100), nullable = True)
     roles = Column(String(20), nullable = True)
     introduction = Column(String(100), nullable = True)
-    avatar = Column(String(100), nullable = True)
     signup_time = Column(DateTime, default = func.now(), nullable = False)
+    recently_time = Column(DateTime, nullable = True)
 
 # 邮件验证码表
 class Mail_Code(Base):
