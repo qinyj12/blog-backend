@@ -47,9 +47,6 @@ class Login(Resource):
         target_user = database_session.query(database_user).filter_by(name = arg_username, password = arg_password).scalar()
         # 如果通过
         if target_user:
-            # 先更新用户的最近活动时间
-            target_user.recently_time = func.now()
-            database_session.commit()
             # 从数据库拿到数据，然后赋值给已定义好的user_info模板
             self.user_info['id'] = target_user.id
             self.user_info['name'] = target_user.name

@@ -51,9 +51,6 @@ class Avatar(Resource):
 
             # 再修改数据库
             target_user.avatar = 'http://127.0.0.1:5000/' + avatar_fullpath
-            # 更新用户的最近活动时间
-            target_user.recently_time = func.now()
-            print(target_user.recently_time)
             database_session.commit()
             database_session.close()
 

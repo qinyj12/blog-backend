@@ -15,7 +15,6 @@ class User(Base):
     roles = Column(String(20), nullable = True)
     introduction = Column(String(100), nullable = True)
     signup_time = Column(DateTime, default = func.now(), nullable = False)
-    recently_time = Column(DateTime, nullable = True)
 
 # 邮件验证码表
 class Mail_Code(Base):
