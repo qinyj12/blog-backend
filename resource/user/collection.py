@@ -1,8 +1,9 @@
+# 这个蓝图是用来放用户信息集合的，比如查询符合条件的所有用户信息
 from flask import app, Blueprint
 from flask_restful import Api, Resource, reqparse
 from database import  database_tables, database_factory
 
-app = Blueprint('userlist', __name__, url_prefix = '/userlist')
+app = Blueprint('userInfoCollection', __name__, url_prefix = '/user/collection/')
 api = Api(app)
 parser = reqparse.RequestParser()
 
@@ -20,7 +21,6 @@ class DateEncoder(json.JSONEncoder):
             return obj.strftime('%Y-%m-%d') # 只取年月日
         else:
             return json.JSONEncoder.default(self, obj)
-
 
 # 获取所有用户的list
 class AllUserList(Resource):
@@ -59,4 +59,5 @@ class AllUserList(Resource):
         database_session.close()
         return resp, 200
 
-api.add_resource(AllUserList, '/')
+
+api.add_resource(AllUserList, '/list/')
