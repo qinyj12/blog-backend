@@ -17,18 +17,14 @@ class Name(Resource):
     def post(self):
         # 先从url中拿到目标用户名
         parser.add_argument('name', type = str, location = ['args'])
+        parser.add_argument('targetUser', location = ['args'])
         args = parser.parse_args()
         arg_name = args['name']
+        user_id = args['targetUser']
+        print(user_id)
 
         # 调用函数，判断用户名是否符合标准，并且是否未在数据库出现。如果符合条件
         if if_name_not_repeated(arg_name) and if_name_legal(arg_name):
-            # 拿到前端传来的token
-            parser.add_argument('X-Token', location = ['headers'])
-            args = parser.parse_args()
-            arg_token = args['X-Token']
-            # 解析token中的信息
-            token_verified = token_verify.verify_token(arg_token)
-            user_id = token_verified['id']
             # 找到对应的用户
             target_user = database_session.query(database_user).filter_by(id = user_id).scalar()
             # 修改数据库中的name字段

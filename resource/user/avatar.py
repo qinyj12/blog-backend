@@ -22,14 +22,13 @@ class Avatar(Resource):
     def post(self):
         # 从files中拿到前端上传的avatar
         parser.add_argument('avatar', type = FileStorage, location = ['files'])
-        # 拿到前端传来的token
-        parser.add_argument('X-Token', location = ['headers'])
+        # 拿到前端传来的userId
+        parser.add_argument('id', location = ['form'])
         args = parser.parse_args()
         arg_avatar = args['avatar']
-        arg_token = args['X-Token']
+        user_id = args['id']
         # 解析token中的信息
-        token_verified = token_verify.verify_token(arg_token)
-        user_id = token_verified['id']
+        # token_verified = token_verify.verify_token(arg_token)
         # 先找到对应的用户
         target_user = database_session.query(database_user).filter_by(id = user_id).scalar()
         if target_user:
