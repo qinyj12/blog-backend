@@ -37,8 +37,26 @@ class Name(Resource):
         else:
             return {
                 'code': 20000,
-                'data': {'if_available': False, 'result': '用户名重复或者包含空格'}
+                'data': {'if_available': False, 'result': '用户名重复或者包含空格或者字符太少'}
             }
+
+class NameAvailability(Resource):
+    def get(self):
+        # 先从url中拿到目标用户名
+        parser.add_argument('name', type = str, location = ['args'])
+        args = parser.parse_args()
+        arg_name = args['name']
+        # 调用函数，判断用户名是否符合标准，并且是否未在数据库出现。如果符合条件
+        if if_name_not_repeated(arg_name) and if_name_legal(arg_name):
+            return {
+                'code': 20000,
+                'data': {'if_available': True, 'result': '用户名可用'}
+            }
+        else:
+            return {
+                'code': 20000,
+                'data': {'if_available': False, 'result': '用户名重复或者包含空格或者字符太少'}
+            }          
 
 # 判断用户名是否重复
 def if_name_not_repeated(name_input):
@@ -51,7 +69,10 @@ def if_name_not_repeated(name_input):
 def if_name_legal(name_input):
     if ' ' in name_input:
         return False
+    elif len(name_input) < 3:
+        return False
     else:
         return True
 
 api.add_resource(Name, '/')
+api.add_resource(NameAvailability, '/availability')
