@@ -26,20 +26,30 @@ def creat_app(spare_config = None):
 
     # 引入蓝图
     from resource import test_hello, test_user
-    from resource.token import update
-    from resource.user import oauth, login, name, avatar, collection, id, phone, role, create
     app.register_blueprint(test_hello.app)
     app.register_blueprint(test_user.app)
+
+    from resource.token import update
+    app.register_blueprint(update.app)
+
+    from resource.user import oauth, login, name, avatar, phone, role, create
     app.register_blueprint(oauth.app)
     app.register_blueprint(login.app)
     app.register_blueprint(name.app)
     app.register_blueprint(avatar.app)
-    app.register_blueprint(update.app)
-    app.register_blueprint(collection.app)
-    app.register_blueprint(id.app)
     app.register_blueprint(phone.app)
     app.register_blueprint(role.app)
     app.register_blueprint(create.app)
+
+    from resource.user import collection as user_collection
+    from resource.user import id as user_id
+    app.register_blueprint(user_collection.app)
+    app.register_blueprint(user_id.app)
+
+    from resource.article import collection as article_collection
+    from resource.article import id as article_id
+    app.register_blueprint(article_collection.app)
+    app.register_blueprint(article_id.app)
 
     # 创建一个flask-mail实例
     app.mail_instance = Mail(app)

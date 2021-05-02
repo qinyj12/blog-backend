@@ -1,6 +1,6 @@
 from flask import app, Blueprint
 from flask_restful import Api, Resource, reqparse
-from database import  database_tables, database_factory
+from database import database_tables, database_factory
 from ..token import token_verify
 
 app = Blueprint('name', __name__, url_prefix = '/name')
