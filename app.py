@@ -1,5 +1,6 @@
 from factory import creat_app
 from flask_cors import CORS
+from factory.config.config import Config
 
 app = creat_app()
 
@@ -7,6 +8,6 @@ app = creat_app()
 CORS(app)
 
 app.run(
-    host = '0.0.0.0',
-    port = '5000'
+    host = Config.HOST_NAME,
+    port = Config.PORT_NAME
 )

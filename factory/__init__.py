@@ -51,7 +51,15 @@ def creat_app(spare_config = None):
     app.register_blueprint(article_collection.app)
     app.register_blueprint(article_id.app)
 
+    from resource.illustration import upload
+    app.register_blueprint(upload.app)
+
     # 创建一个flask-mail实例
     app.mail_instance = Mail(app)
+
+    # 创建flask-uploads实例
+    from flask_uploads import IMAGES, configure_uploads, UploadSet
+    app.illustration_upload = UploadSet('illustration', IMAGES)
+    configure_uploads(app, app.illustration_upload)
 
     return app

@@ -1,6 +1,5 @@
 from flask import app, Blueprint
 from flask_restful import Api, Resource, reqparse, request
-from sqlalchemy.sql import func
 from database import database_tables, database_factory
 from ..token import token_verify
 from werkzeug.datastructures import FileStorage
