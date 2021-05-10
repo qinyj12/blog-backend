@@ -58,7 +58,7 @@ def creat_app(spare_config = None):
     app.mail_instance = Mail(app)
 
     # 创建flask-uploads实例
-    from flask_uploads import IMAGES, configure_uploads, UploadSet
+    from flask_uploads import IMAGES, ALL, configure_uploads, UploadSet
     app.illustration_upload = UploadSet('illustration', IMAGES)
     configure_uploads(app, app.illustration_upload)
 

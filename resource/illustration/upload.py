@@ -11,7 +11,7 @@ api = Api(app)
 parser = reqparse.RequestParser()
 
 class Upload(Resource):
-    def put(self):
+    def post(self):
         parser.add_argument('illustration', type = FileStorage, location = ['files'])
         args = parser.parse_args()
         arg_illustration = args['illustration']
@@ -19,9 +19,19 @@ class Upload(Resource):
         filename = current_app.illustration_upload.save(arg_illustration)
         # 获取保存后的地址
         file_url = 'http://' + Config.HOST_NAME + ':' + Config.PORT_NAME + '/' + current_app.illustration_upload.path(filename)
+        # return {
+        #     'code': 20000,
+        #     'data': file_url
+        # }
         return {
-            'code': 20000,
-            'data': file_url
+            "msg": "",  
+            "code": 0,  
+            "data": {  
+                "errFiles": [],  
+                "succMap": {  
+                    "demo.png": file_url,  
+                }  
+            }  
         }
 
 api.add_resource(Upload, '/upload/')
