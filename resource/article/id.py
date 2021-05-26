@@ -9,7 +9,7 @@ parser = reqparse.RequestParser()
 database_session = database_factory.session
 database_article = database_tables.Article
 
-# 根据userID获取具体某个用户的全部信息
+# 根据userID获取具体某个article的全部信息
 class IdArticleInfo(Resource):
     def __init__(self):
         self.article_info = {
