@@ -9,7 +9,7 @@ class Config(secret.Secret):
     DATABASE_URL = 'mysql+pymysql://qinyj12:123456@127.0.0.1:3306/main?charset=utf8'
     # flask_uploads的配置
     UPLOADED_ILLUSTRATION_DEST = './static/article/illustration/'
-    UPLOADED_ARTICLE_DEST = './static/article/md_file/'
+    UPLOADED_COVER_DEST = './static/article/cover/'
     # 自定义host ip地址
     HOST_NAME = '127.0.0.1'
     # 自定义port端口

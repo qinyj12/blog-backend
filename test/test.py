@@ -38,12 +38,6 @@
 
 # database_session.close()
 
-a = '0'
-b = 1
+import time
 
-try:
-    b = b + 1
-    a = a + 1
-    print('yes', b)
-except:
-    print('no', b)
+print(int(time.time()))

@@ -20,11 +20,11 @@ class Avatar(Resource):
     # 修改用户头像
     def post(self):
         # 从files中拿到前端上传的avatar
-        parser.add_argument('avatar', type = FileStorage, location = ['files'])
+        parser.add_argument('img', type = FileStorage, location = ['files'])
         # 拿到前端传来的userId
         parser.add_argument('id', location = ['form'])
         args = parser.parse_args()
-        arg_avatar = args['avatar']
+        arg_avatar = args['img']
         user_id = args['id']
         # 解析token中的信息
         # token_verified = token_verify.verify_token(arg_token)
@@ -59,6 +59,7 @@ class Avatar(Resource):
                 print('未删除old avatar')
 
         else:
+            database_session.close()
             return {'code': 50008, 'message': '用户不存在'}, 200
 
         return {

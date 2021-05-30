@@ -1,9 +1,6 @@
 from flask import app, Blueprint, current_app
-from flask_restful import Api, Resource, reqparse, request
+from flask_restful import Api, Resource, reqparse
 from werkzeug.datastructures import FileStorage
-import pathlib
-import time
-import os
 from factory.config.config import Config
 
 app = Blueprint('illustration', __name__, url_prefix = '/illustration')
@@ -19,10 +16,6 @@ class Upload(Resource):
         filename = current_app.illustration_upload.save(arg_illustration)
         # 获取保存后的地址
         file_url = 'http://' + Config.HOST_NAME + ':' + Config.PORT_NAME + '/' + current_app.illustration_upload.path(filename)
-        # return {
-        #     'code': 20000,
-        #     'data': file_url
-        # }
         return {
             "msg": "",  
             "code": 0,  

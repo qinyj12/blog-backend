@@ -5,7 +5,7 @@ from ..token import token_verify
 from werkzeug.datastructures import FileStorage
 from factory.config.config import Config
 
-app = Blueprint('article', __name__, url_prefix = '/save')
+app = Blueprint('article', __name__, url_prefix = '/article')
 api = Api(app)
 parser = reqparse.RequestParser()
 
@@ -29,11 +29,11 @@ class ArticleCreator(Resource):
         # 拿到前段传来的各种article信息
         parser.add_argument('user_id', location = ['form'])
         parser.add_argument('article_title', location = ['form'])
-        parser.add_argument('article_cover', type = FileStorage, location = ['files'])
+        parser.add_argument('article_cover', location = ['form'])
         parser.add_argument('article_tag', location = ['form'])
         parser.add_argument('article_state', location = ['form'])
         # 不能从前端传送md到后端，而要在后端生成md
-        parser.add_argument('article_md', type = FileStorage, location = ['files'])
+        parser.add_argument('article_md', location = ['form'])
 
         args = parser.parse_args()
         self.article_info['title'] = args['article_title']
@@ -41,8 +41,6 @@ class ArticleCreator(Resource):
         self.article_info['cover'] = args['article_cover']
         self.article_info['state'] = args['article_state']
         self.article_info['tag'] = args['article_tag']
-
-        arg_article_content = args['article_md']
 
         database_session.add(
             database_article(
@@ -54,19 +52,30 @@ class ArticleCreator(Resource):
             )
         )
 
+        arg_article_content = args['article_md']
+
+        target_md_file_folder = '.' + current_app.static_url_path + '/article/md_file/' + args['user_id'] + '/'
+
+        from api import create_directory
+        create_directory.mkdir_p(target_md_file_folder)
+
+        with open(target_md_file_folder + args['article_title'] + '.md', 'w') as f:
+            f.write(arg_article_content)
+
         # 调用在工厂函数里定义的flask_uploads实例，保存前端上传的文件
-        filename = current_app.illustration_upload.save(arg_article_content)
+        # filename = current_app.illustration_upload.save(arg_article_content)
         # 获取保存后的地址
-        file_url = 'http://' + Config.HOST_NAME + ':' + Config.PORT_NAME + '/' + current_app.article_upload.path(filename)
+        # file_url = 'http://' + Config.HOST_NAME + ':' + Config.PORT_NAME + '/' + current_app.article_upload.path(filename)
 
         try:
             database_session.commit()
             database_session.close()
             return {
                 'code': 20000,
-                'data': {'result': '新增成功', 'article_url': file_url}
+                'data': {'result': '新增成功', 'article_url': 'demo'}
             }
-        except:
+        except Exception as e:
+            print(e)
             database_session.rollback()
             database_session.close()
             return {
@@ -74,4 +83,4 @@ class ArticleCreator(Resource):
                 'data': {'result': '失败'}
             }
 
-api.add_resource(ArticleCreator, '/')
+api.add_resource(ArticleCreator, '/save/')

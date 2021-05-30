@@ -49,9 +49,11 @@ def creat_app(spare_config = None):
     from resource.article import collection as article_collection
     from resource.article import id as article_id
     from resource.article import save as article_save
+    from resource.article import cover as article_cover
     app.register_blueprint(article_collection.app)
     app.register_blueprint(article_id.app)
     app.register_blueprint(article_save.app)
+    app.register_blueprint(article_cover.app)
 
     from resource.illustration import upload
     app.register_blueprint(upload.app)
@@ -62,7 +64,7 @@ def creat_app(spare_config = None):
     # 创建flask-uploads实例
     from flask_uploads import IMAGES, ALL, configure_uploads, UploadSet
     app.illustration_upload = UploadSet('illustration', IMAGES)
-    app.article_upload = UploadSet('article', ALL)
-    configure_uploads(app, [app.illustration_upload, app.article_upload])
+    app.cover_upload = UploadSet('cover', IMAGES)
+    configure_uploads(app, [app.illustration_upload, app.cover_upload])
 
     return app
