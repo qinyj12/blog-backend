@@ -1,4 +1,3 @@
-from os import name
 from flask import app, Blueprint, current_app
 from flask_restful import Api, Resource, reqparse
 from database import database_tables, database_factory
@@ -22,13 +21,8 @@ class Cover(Resource):
         parser.add_argument('img', type = FileStorage, location = ['files'])
         args = parser.parse_args()
         arg_cover = args['img']
-        print(arg_cover)
         # 调用在工厂函数里定义的flask_uploads实例，保存前端上传的文件
         from api import create_time_stamp
-        # 问题在这里，拿到前端传来的img后，无法用flask_upload保存，但如果直接用arg['xx'].save却可以。参照avatar的路由
-        ##########
-        ########
-        ########
         filename = current_app.cover_upload.save(arg_cover, name = create_time_stamp.now() + '.')
         # 获取保存后的地址
         file_url = 'http://' + Config.HOST_NAME + ':' + Config.PORT_NAME + '/' + current_app.cover_upload.path(filename)
