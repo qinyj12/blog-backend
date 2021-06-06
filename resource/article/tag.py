@@ -15,8 +15,18 @@ database_article = database_tables.Article
 
 class Tag(Resource):
     def get(self):
-        # 下一步，完善tag统计频次的后盾接口
-        a = database_session.query(database_article.tag, func.count(database_article.tag)).group_by(database_article.tag).all()
-        return a
+        # 要统计tag频次，就要有一个统计上限
+        parser.add_argument('max_num', type = int, location = ['args'])
+        args = parser.parse_args()
+        args_tags_max_num = args['max_num']
+        # tag统计频次
+        count_result = database_session.query(database_article.tag, func.count(database_article.tag)).group_by(database_article.tag).all()
+        # 因为统计到的成果是这样的[('a',1),('b',2)]，所以要转换一下
+        count_result_in_list = list({'tag': i[0], 'num': i[1]} for i in count_result)
+        # 然后根据前端的传值，拿到max_num以内的统计结果
+        return {
+            'code': 20000,
+            'data': count_result_in_list[0 : args_tags_max_num]
+        }
 
 api.add_resource(Tag, '/')

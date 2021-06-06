@@ -38,6 +38,8 @@
 
 # database_session.close()
 
-import time
+demo = [('a',1),('b',2)]
 
-print(int(time.time()))
+demo2 = list({'tag': i[0], 'num': i[1]} for i in demo)
+
+print(demo2)

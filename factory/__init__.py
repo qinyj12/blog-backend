@@ -48,17 +48,17 @@ def creat_app(spare_config = None):
 
     from resource.article import collection as article_collection
     from resource.article import id as article_id
-    from resource.article import save as article_save
+    from resource.article import save_all as article_save_all
     from resource.article import cover as article_cover
     from resource.article import tag as article_tag
     app.register_blueprint(article_collection.app)
     app.register_blueprint(article_id.app)
-    app.register_blueprint(article_save.app)
+    app.register_blueprint(article_save_all.app)
     app.register_blueprint(article_cover.app)
     app.register_blueprint(article_tag.app)
 
-    from resource.illustration import upload
-    app.register_blueprint(upload.app)
+    from resource.illustration import upload as illustration_upload
+    app.register_blueprint(illustration_upload.app)
 
     # 创建一个flask-mail实例
     app.mail_instance = Mail(app)

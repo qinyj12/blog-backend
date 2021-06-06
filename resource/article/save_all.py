@@ -5,7 +5,7 @@ from ..token import token_verify
 from werkzeug.datastructures import FileStorage
 from factory.config.config import Config
 
-app = Blueprint('article', __name__, url_prefix = '/article')
+app = Blueprint('article', __name__, url_prefix = '/article/saveall')
 api = Api(app)
 parser = reqparse.RequestParser()
 
@@ -59,7 +59,7 @@ class ArticleCreator(Resource):
         from api import create_directory
         create_directory.mkdir_p(target_md_file_folder)
 
-        with open(target_md_file_folder + args['article_title'] + '.md', 'w') as f:
+        with open(target_md_file_folder + args['article_title'] + '.md', 'w', encoding='utf-8') as f:
             f.write(arg_article_content)
 
         # 调用在工厂函数里定义的flask_uploads实例，保存前端上传的文件
@@ -83,4 +83,4 @@ class ArticleCreator(Resource):
                 'data': {'result': '失败'}
             }
 
-api.add_resource(ArticleCreator, '/save/')
+api.add_resource(ArticleCreator, '/')
