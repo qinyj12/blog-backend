@@ -42,13 +42,16 @@ class ArticleCreator(Resource):
         self.article_info['state'] = args['article_state']
         self.article_info['tag'] = args['article_tag']
 
+        from api import create_time_stamp
+        arg_file_name = self.article_info['title'] + '_' + create_time_stamp.now() + '.md'
         database_session.add(
             database_article(
-                title = self.article_info['title'] ,
+                title = self.article_info['title'],
                 user_id = self.article_info['user_id'],
                 cover = self.article_info['cover'],
                 state = self.article_info['state'],
-                tag = self.article_info['tag']
+                tag = self.article_info['tag'],
+                file_name = arg_file_name
             )
         )
 
@@ -59,7 +62,7 @@ class ArticleCreator(Resource):
         from api import create_directory
         create_directory.mkdir_p(target_md_file_folder)
 
-        with open(target_md_file_folder + args['article_title'] + '.md', 'w', encoding='utf-8') as f:
+        with open(target_md_file_folder + arg_file_name, 'w', encoding='utf-8') as f:
             f.write(arg_article_content)
 
         # 调用在工厂函数里定义的flask_uploads实例，保存前端上传的文件

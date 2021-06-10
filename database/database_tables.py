@@ -28,6 +28,7 @@ class Article(Base):
     cover = Column(String(100), nullable = False)
     state = Column(String(20), nullable = False)
     tag = Column(String(20), nullable = True)
+    file_name = Column(String(100), nullable = False) # md文件的文件名
 
 # 邮件验证码表
 class Mail_Code(Base):
