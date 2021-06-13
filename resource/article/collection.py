@@ -21,20 +21,7 @@ class DateEncoder(json.JSONEncoder):
         if isinstance(obj, datetime.datetime):
             return obj.strftime('%Y-%m-%d') # 只取年月日
         else:
-            return json.JSONEncoder.default(self, obj)
-
-# 获取单篇文章的信息
-class SingleArticleInfo(Resource):
-    def get(self):
-        # 获取articleId
-        parser.add_argument('articleId', type = str, location = ['args'])
-        args = parser.parse_args()
-        arg_article_id = args['articleId']
-        # 从数据库查找这个文章的作者、文件名
-        # 去后端查找这篇文章的md文件，读取内容
-        # 连带title、cover、tag等一起，返回给前端。、
-        # 后端验证是否是管理员或者文章作者，如果不是，不可修改
-        
+            return json.JSONEncoder.default(self, obj)        
 
 # 获取所有文章的list
 class AllArticleList(Resource):

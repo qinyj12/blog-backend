@@ -14,4 +14,6 @@ class Config(secret.Secret):
     HOST_NAME = '127.0.0.1'
     # 自定义port端口
     PORT_NAME = '5000'
+    # 自定义文章保存父目录
+    ARTICLE_FILE_DEST = './static/article/md_file/'
 

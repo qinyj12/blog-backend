@@ -37,9 +37,3 @@
 # print(list(map(lambda x: x.id, target_user.relate_article)))
 
 # database_session.close()
-
-demo = [('a',1),('b',2)]
-
-demo2 = list({'tag': i[0], 'num': i[1]} for i in demo)
-
-print(demo2)
