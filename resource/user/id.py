@@ -44,6 +44,7 @@ class IdUserInfo(Resource):
             database_session.close()
             return resp, 200
         else:
+            database_session.close()
             resp = {
                 'code': 50000,
                 'message': '根据id查找用户出错'

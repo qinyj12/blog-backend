@@ -50,6 +50,7 @@ class Token(Resource):
             }
             return resp, 200
         else:
+            database_session.close()
             return {'code': 50008, 'message': '用户不存在'}, 200
 
 api.add_resource(Token, '/update')

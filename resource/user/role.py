@@ -35,6 +35,7 @@ class Role(Resource):
                 'data': {'if_available': True, 'result': '修改成功'}
             }                                                                                                                                          
         else:
+            database_session.close()
             return {
                 'code': 20000,
                 'data': {'if_available': False, 'result': '权限不合法'}

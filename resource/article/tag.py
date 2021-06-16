@@ -25,6 +25,8 @@ class Tag(Resource):
         # 因为统计到的成果是这样的[('a',1),('b',2)]，所以要转换一下
         count_result_in_list = list({'tag': i[0], 'num': i[1]} for i in count_result)
         # 然后根据前端的传值，拿到max_num以内的统计结果
+        # 当然要先close链接
+        database_session.close()
         return {
             'code': 20000,
             'data': count_result_in_list[0 : args_tags_max_num]

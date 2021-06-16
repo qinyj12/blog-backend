@@ -63,6 +63,7 @@ class Login(Resource):
             return resp, 200
         # 如果用户名和密码不一致
         else:
+            database_session.close()
             return {'code': 50008, 'message': '用户名和密码不一致'}, 200
 
     # 引入装饰器，确保存在User表
@@ -144,6 +145,7 @@ class Test_Mail(Resource):
         return '发送成功'
 
     def get(self):
+        database_session.close()
         return make_response('\
             <form method="post"enctype="multipart/form-data">\
                 <input type="text" name="user_mail_address">\

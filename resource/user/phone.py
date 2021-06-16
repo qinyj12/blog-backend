@@ -34,6 +34,7 @@ class Phone(Resource):
                 'data': {'if_available': True, 'result': '修改成功'}
             }                                                                                                                                          
         else:
+            database_session.close()
             return {
                 'code': 20000,
                 'data': {'if_available': False, 'result': '电话重复或者不合法'}

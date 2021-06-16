@@ -35,6 +35,7 @@ class Name(Resource):
                 'data': {'if_available': True, 'result': '修改成功'}
             }                                                                                                                                          
         else:
+            database_session.close()
             return {
                 'code': 20000,
                 'data': {'if_available': False, 'result': '用户名重复或者包含空格或者字符太少'}
@@ -48,11 +49,13 @@ class NameAvailability(Resource):
         arg_name = args['name']
         # 调用函数，判断用户名是否符合标准，并且是否未在数据库出现。如果符合条件
         if if_name_not_repeated(arg_name) and if_name_legal(arg_name):
+            database_session.close()
             return {
                 'code': 20000,
                 'data': {'if_available': True, 'result': '用户名可用'}
             }
         else:
+            database_session.close()
             return {
                 'code': 20000,
                 'data': {'if_available': False, 'result': '用户名重复或者包含空格或者字符太少'}

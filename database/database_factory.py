@@ -1,6 +1,6 @@
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy import create_engine
-from sqlalchemy.orm import sessionmaker
+from sqlalchemy.orm import sessionmaker, scoped_session
 from sqlalchemy.ext.declarative import declarative_base
 # 在factory/config/config的Config类中定义database的链接
 from factory.config.config import Config
@@ -16,7 +16,7 @@ engine = create_engine(
     # pool_timeout=30,  # 池中没有线程最多等待的时间，否则报错
     # pool_recycle=-1   # 多久之后对线程池中的线程进行一次连接的回收（重置）
 )
-# 使用sessionmaker来创建session类
-DBSession = sessionmaker(engine)
+# 使用sessionmaker来创建session类，同时用scoped_session来XXX（没搞懂）
+DBSession = scoped_session(sessionmaker(engine))
 # session是操作数据库的入口，用session来管理程序和数据库之间的会话，实现增删改查
 session = DBSession()

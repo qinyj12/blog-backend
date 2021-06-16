@@ -62,9 +62,4 @@ class Avatar(Resource):
             database_session.close()
             return {'code': 50008, 'message': '用户不存在'}, 200
 
-        return {
-            'code': 20000,
-            'data': 'avatar'
-        }
-
 api.add_resource(Avatar, '/')
