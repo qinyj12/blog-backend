@@ -9,5 +9,6 @@ CORS(app)
 
 app.run(
     host = Config.HOST_NAME,
-    port = Config.PORT_NAME
+    port = Config.PORT_NAME,
+    threaded = True # 开多线程，防止加载一个页面时访问多个服务，导致出错
 )

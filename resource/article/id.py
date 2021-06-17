@@ -75,6 +75,7 @@ class IdArticleInfo(Resource):
                 'code': 50000,
                 'message': '根据id查找文章出错'
             }
+            database_session.close()
             return resp, 200
 
 api.add_resource(IdArticleInfo, '/')
