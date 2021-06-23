@@ -8,13 +8,27 @@ app = Blueprint('article_tag', __name__, url_prefix = '/article/tag')
 api = Api(app)
 parser = reqparse.RequestParser()
 
-# 拿到session
-database_session = database_factory.session
-# 拿到表类
-database_article = database_tables.Article
+# # 拿到session
+# database_session = database_factory.session
+# # 拿到表类
+# database_article = database_tables.Article
+
+# 这里要修复，session要单独在每个文件里执行
+#################3
+#################、########3
+##############3
+
+# from sqlalchemy.orm import session, sessionmaker, scoped_session
+# from database import database_factory
+# DBSession = scoped_session(sessionmaker(database_factory.engine))
+# session = DBSession()
+# database_session = session
+# database_article = database_tables.Article
 
 class Tag(Resource):
     def get(self):
+        # import time
+        # time.sleep(2)
         # 要统计tag频次，就要有一个统计上限
         parser.add_argument('max_num', type = int, location = ['args'])
         args = parser.parse_args()

@@ -11,10 +11,11 @@ Base = declarative_base()
 # 创建engine对象，所有对数据库的操作都通过engine对象来进行
 engine = create_engine(
     Config.DATABASE_URL,
+    pool_pre_ping=True, # 每次从连接池中拿连接的时候，都会向数据库发送一个测试查询语句来判断服务器是否正常运行。当该连接出现 disconnect 的情况时，该连接连同pool中的其它连接都会被回收。
     # max_overflow=0,   # 超过连接池大小外最多创建的连接
-    # pool_size=5,      # 连接池大小
+    pool_size=5,      # 连接池大小
     # pool_timeout=30,  # 池中没有线程最多等待的时间，否则报错
-    # pool_recycle=-1   # 多久之后对线程池中的线程进行一次连接的回收（重置）
+    pool_recycle=3600   # 多久之后对线程池中的线程进行一次连接的回收
 )
 # 使用sessionmaker来创建session类，同时用scoped_session来XXX（没搞懂）
 DBSession = scoped_session(sessionmaker(engine))
