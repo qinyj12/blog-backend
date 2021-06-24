@@ -9,7 +9,7 @@ app = Blueprint('articleId', __name__, url_prefix = '/article/id')
 api = Api(app)
 parser = reqparse.RequestParser()
 
-database_session = database_factory.session
+database_session = database_factory.DBSession()
 database_article = database_tables.Article
 
 # 根据userID获取具体某个article的全部信息
@@ -28,6 +28,7 @@ class IdArticleInfo(Resource):
         }
     # 根据id查询article信息
     def get(self):
+        print(id(database_session))
         parser.add_argument('article_id', location = ['args'])
         parser.add_argument('if_need_content', location = ['args'])
         args = parser.parse_args()

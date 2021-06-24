@@ -18,6 +18,6 @@ engine = create_engine(
     pool_recycle=3600   # 多久之后对线程池中的线程进行一次连接的回收
 )
 # 使用sessionmaker来创建session类，同时用scoped_session来XXX（没搞懂）
-DBSession = scoped_session(sessionmaker(engine))
+DBSession = sessionmaker(engine)
 # session是操作数据库的入口，用session来管理程序和数据库之间的会话，实现增删改查
-session = DBSession()
+# session = DBSession()

@@ -8,7 +8,7 @@ api = Api(app)
 parser = reqparse.RequestParser()
 
 # 拿到session
-database_session = database_factory.session
+database_session = database_factory.DBSession()
 # 拿到表类
 database_article = database_tables.Article
 database_user = database_tables.User

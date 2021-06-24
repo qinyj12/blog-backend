@@ -6,7 +6,7 @@ app = Blueprint('userid', __name__, url_prefix = '/user/id')
 api = Api(app)
 parser = reqparse.RequestParser()
 
-database_session = database_factory.session
+database_session = database_factory.DBSession()
 database_user = database_tables.User
 
 # 根据userID获取具体某个用户的全部信息
